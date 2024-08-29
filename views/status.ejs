@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/images/RxBot.png">
+    <title>RxBot | Status</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #d0d0d0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        header {
+            background-color: #121212;
+            color: #fff;
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        header.scrolled {
+            background-color: #1f1f1f;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            height: 50px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            margin-left: 25px;
+        }
+
+        nav ul li a {
+            color: #d0d0d0;
+            text-decoration: none;
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #ffcc00;
+        }
+
+        .status-section {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+            flex: 1;
+        }
+
+        .status-section h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .status-box {
+            display: inline-block;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            width: 200px;
+            background-color: #333;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #count, #online {
+            font-size: 18px;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            color: #fff;
+        }
+
+        footer {
+            background-color: #121212;
+            color: #ccc;
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #333;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        footer p span {
+            color: #ffcc00;
+        }
+    </style>
+</head>
+<body>
+    <header id="header">
+        <nav>
+            <img src="/images/RxBot.png" alt="RxBot Logo" class="logo">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/commands">Commands</a></li>
+                <li><a href="/blog">Updates</a></li>
+                <li><a href="/status">Status</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="content-wrapper">
+        <main>
+            <section class="status-section">
+                <h2>RxBot Status</h2>
+                <div class="status-box">
+                    <h3>Server Count</h3>
+                    <div id="count">Loading...</div>
+                </div>
+                <div class="status-box">
+                    <h3>Bot Status</h3>
+                    <div id="online">Loading...</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 RxDev. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const header = document.querySelector('header');
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+            window.addEventListener("load", function () {
+                fetchWithTimeout('https://rxdev.alwaysdata.net/api', { method: 'POST' }, 'count')
+                    .then(response => response.text())
+                    .then(data => updateStatus('count', data))
+                    .catch(() => updateStatus('count', 'ERROR', true));
+
+                fetchWithTimeout('https://rxdev.alwaysdata.net/api', { method: 'POST' }, 'ping')
+                    .then(response => response.status)
+                    .then(status => updateStatus('online', status === 200 ? 'Online' : 'Offline', status !== 200))
+                    .catch(() => updateStatus('online', 'Offline', true));
+            });
+
+            async function fetchWithTimeout(url, options, request, timeout = 3000) {
+                const controller = new AbortController();
+                const timeoutError = new Error('Fetch timed out');
+                const fetchOptions = {
+                    ...options,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    body: JSON.stringify({ request }),
+                    signal: controller.signal
+                };
+
+                const fetchPromise = fetch(url, fetchOptions);
+                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(timeoutError), timeout));
+
+                try {
+                    return await Promise.race([fetchPromise, timeoutPromise]);
+                } catch (error) {
+                    controller.abort();
+                    throw error;
+                }
+            }
+
+            function updateStatus(elementId, message, isError = false) {
+                const elem = document.getElementById(elementId);
+                if (elem) {
+                    elem.innerText = message;
+                    elem.style.backgroundColor = isError ? '#f23f43' : (elementId === 'online' ? '#1fb141' : '#5865f2');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

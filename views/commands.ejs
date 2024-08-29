@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/images/RxBot.png">
+    <meta property="og:title" content="RxBot">
+    <meta property="og:description" content="A powerful and versatile bot designed to enhance your Discord server experience.">
+    <meta property="og:url" content="https://rxdev.site">
+    <meta name="google-adsense-account" content="ca-pub-9309682582021490">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://rxdev.site/RxBot.png">
+    <title>RxBot | Commands</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+    <style>
+        /* Global Styles */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #171717;
+            color: #ffffff;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #121212;
+            color: #fff;
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        header.scrolled {
+            background-color: #1f1f1f;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            height: 50px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            margin-left: 25px;
+        }
+
+        nav ul li a {
+            color: #d0d0d0;
+            text-decoration: none;
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #ffcc00;
+        }
+
+        /* Search Bar Styles */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin: 100px 0 20px 0; /* Adjusted margin-top to 100px to position below header */
+        }
+
+        .search-bar {
+            padding: 10px;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 5px;
+            border: 1px solid #333;
+            background-color: #2a2a2a;
+            color: #fff;
+        }
+
+        /* Filter Button Styles */
+        .filters {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .filter-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .filter-btn:hover {
+            background-color: #555;
+        }
+
+        /* Commands Grid Styles */
+        .commands {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        /* Enhanced Commands Grid Styles */
+        .command {
+            background: linear-gradient(135deg, #2a2a2a, #1f1f1f);
+            padding: 20px;
+            border-radius: 12px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none; /* Removed the red border */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            overflow: hidden; /* Ensure content doesn't overflow */
+            position: relative; /* Allow for additional styling inside */
+        }
+
+        .command:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .command h3 {
+            margin-top: 0;
+            font-size: 20px;
+            color: #ffa500; /* Highlight the command name */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .command p {
+            font-size: 16px;
+            color: #d0d0d0; /* Slightly lighter text for descriptions */
+            margin: 10px 0 0;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            transition: background-color 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+    <header id="header">
+        <nav>
+            <img src="/images/RxBot.png" alt="RxBot Logo" class="logo">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/commands">Commands</a></li>
+                <li><a href="/blog">Updates</a></li>
+                <li><a href="/status">Status</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="search-container">
+        <input type="text" class="search-bar" id="search-bar" placeholder="Search commands...">
+    </div>
+
+    <div class="filters">
+        <button class="filter-btn" onclick="filterCommands('all')">All</button>
+        <button class="filter-btn" onclick="filterCommands('misc')">Misc</button>
+        <button class="filter-btn" onclick="filterCommands('fun')">Fun</button>
+        <button class="filter-btn" onclick="filterCommands('utility')">Utility</button>
+        <button class="filter-btn" onclick="filterCommands('moderation')">Moderation</button>
+    </div>
+
+    <div class="commands" id="commands">
+        <!-- Misc Commands -->
+        <div class="command misc">
+            <h3>/help</h3>
+            <p>Get help about commands</p>
+        </div>
+        <div class="command misc">
+            <h3>/uptime</h3>
+            <p>Check the bot's uptime</p>
+        </div>
+        <div class="command misc">
+            <h3>/ping</h3>
+            <p>Check the bot's latency</p>
+        </div>
+        <div class="command misc">
+            <h3>/owner</h3>
+            <p>Get information about the bot's owner</p>
+        </div>
+        <div class="command misc">
+            <h3>/serverinfo</h3>
+            <p>Get information about the server</p>
+        </div>
+        <div class="command misc">
+            <h3>/userinfo</h3>
+            <p>Get information about a specific user</p>
+        </div>
+        <div class="command misc">
+            <h3>/poll</h3>
+            <p>Create a poll</p>
+        </div>
+        <div class="command misc">
+            <h3>/role</h3>
+            <p>Give or remove a role of a specific user</p>
+        </div>
+        <div class="command misc">
+            <h3>/mclear</h3>
+            <p>Clears messages between 2-100</p>
+        </div>
+        <div class="command misc">
+            <h3>/slowmode</h3>
+            <p>Change the slowmode of a channel or all channels (admin perms or manage channels role)</p>
+        </div>
+        <div class="command misc">
+            <h3>/site</h3>
+            <p>Responds with the site link.</p>
+        </div>
+        <div class="command misc">
+            <h3>/untimeout</h3>
+            <p>Untimeouts a user</p>
+        </div>
+        <div class="command misc">
+            <h3>/donate</h3>
+            <p>Shows the Rx Development donate page</p>
+        </div>
+        <div class="command misc">
+            <h3>/info</h3>
+            <p>Shows info about the bot and the Developers</p>
+        </div>
+        <div class="command misc">
+            <h3>/devs</h3>
+            <p>Shows info about the bot and the Developers</p>
+        </div>
+
+        <!-- Fun Commands -->
+        <div class="command fun">
+            <h3>/meme</h3>
+            <p>Shows random Meme</p>
+        </div>
+
+        <!-- Utility Commands -->
+        <div class="command utility">
+            <h3>/announcement</h3>
+            <p>You can create announcements (needs admin perms)</p>
+        </div>
+        <div class="command utility">
+          <h3>Mystery Command?</h3>
+          <p>Mystery Command?. Coming Soon!</p>
+        </div>
+
+        <!-- Moderation Commands -->
+        <div class="command moderation">
+            <h3>/ban</h3>
+            <p>Bans a user</p>
+        </div>
+        <div class="command moderation">
+            <h3>/unban</h3>
+            <p>Unbans a user</p>
+        </div>
+        <div class="command moderation">
+            <h3>/timeout</h3>
+            <p>Timeouts a user</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 RxDev. All rights reserved. Made with Love 💖</p>
+    </footer>
+
+    <script>
+        function filterCommands(category) {
+            const commands = document.querySelectorAll('.command');
+            commands.forEach(command => {
+                if (category === 'all' || command.classList.contains(category)) {
+                    command.style.display = 'block';
+                } else {
+                    command.style.display = 'none';
+                }
+            });
+        }
+
+        document.getElementById('search-bar').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            const commands = document.querySelectorAll('.command');
+            commands.forEach(command => {
+                const commandText = command.innerText.toLowerCase();
+                if (commandText.includes(query)) {
+                    command.style.display = 'block';
+                } else {
+                    command.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
